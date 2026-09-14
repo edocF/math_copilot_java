@@ -173,9 +173,11 @@ create table if not exists export_task
     errorMsg      varchar(512)                       null comment '失败原因',
     snapshotJson  mediumtext                         null comment '导出成功时定格的题面 JSON',
     idempotentKey varchar(64)                        null comment '幂等键',
+    retryCount   int      default 0                 not null comment '已失败的执行次数',
     createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     UNIQUE KEY uk_idempotent (idempotentKey),
     index idx_paperId (paperId),
-    index idx_userId_status (userId, status)
+    index idx_userId_status (userId, status),
+    index idx_status_updateTime (status, updateTime)
 ) comment '导出任务' collate = utf8mb4_unicode_ci;

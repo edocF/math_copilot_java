@@ -41,6 +41,8 @@ public class ExportTask implements Serializable {
 
     private String idempotentKey;
 
+    private Integer retryCount;
+
     private Date createTime;
 
     private Date updateTime;
