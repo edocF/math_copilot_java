@@ -14,14 +14,14 @@ import com.fu.math_copilot.model.vo.ExportTaskVO;
 public interface ExportTaskService extends IService<ExportTask> {
 
     /**
-     * 提交导出任务（创建 pending 记录；异步执行由 {@link #executeExportAsync} 负责，待你实现）
+     * 提交导出任务（创建 pending 记录，事务提交后投递到 RabbitMQ）
      */
     Long submitExport(ExamPaperExportRequest request);
 
     /**
-     * 异步执行导出 —— <b>留空供你实现</b>（freemarker 渲染 → 生成文件 → 上传 COS → 写 snapshotJson）
+     * 执行已被消费者抢占的导出任务。失败时抛出异常，由 MQ 消费编排层决定重试或终止。
      */
-    void executeExportAsync(Long taskId);
+    void executeExport(Long taskId);
 
     ExportTaskVO getTaskStatus(Long taskId);
 
@@ -29,7 +29,7 @@ public interface ExportTaskService extends IService<ExportTask> {
 
     Page<ExportTaskVO> listMyPage(ExportTaskQueryRequest queryRequest);
 
-    // ---------- 以下供你在 executeExportAsync 中调用 ----------
+    // ---------- 导出过程内部状态更新 ----------
 
     ExportTask getTaskForExport(Long taskId);
 

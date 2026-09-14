@@ -113,21 +113,14 @@ public class ExportTaskServiceImpl extends ServiceImpl<ExportTaskMapper, ExportT
      * 异步导出：查题面 → FreeMarker 渲染 HTML → Gotenberg 转 PDF → 上传 COS → 写 snapshotJson
      */
     @Override
-    public void executeExportAsync(Long taskId) {
+    public void executeExport(Long taskId) {
         ExportTask task = this.getById(taskId);
         if (task == null) {
             log.warn("导出任务不存在, taskId={}", taskId);
             return;
         }
-        if (!ExportStatusEnum.PENDING.getValue().equals(task.getStatus())) {
-            log.warn("导出任务非 pending，跳过执行, taskId={}, status={}", taskId, task.getStatus());
-            return;
-        }
-
         File tempFile = null;
         try {
-            markProcessing(taskId);
-
             ExamPaperDetailVO paper = examPaperService.buildDetailForExport(
                     task.getPaperId(), task.getContentScope());
             if (CollUtil.isNotEmpty(paper.getMissingQuestionIds())) {
@@ -152,12 +145,6 @@ public class ExportTaskServiceImpl extends ServiceImpl<ExportTaskMapper, ExportT
 
             markSuccess(taskId, fileUrl, fileKey, snapshotJson);
             log.info("导出任务完成, taskId={}, format={}", taskId, task.getFormat());
-        } catch (Exception e) {
-            String message = e instanceof BusinessException
-                    ? e.getMessage()
-                    : "导出失败，请稍后重试";
-            markFailed(taskId, message);
-            log.error("导出任务失败, taskId={}", taskId, e);
         } finally {
             if (tempFile != null && tempFile.exists() && !tempFile.delete()) {
                 log.warn("导出临时文件删除失败, path={}", tempFile.getAbsolutePath());

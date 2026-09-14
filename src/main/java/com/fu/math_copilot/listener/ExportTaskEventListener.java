@@ -23,6 +23,6 @@ public class ExportTaskEventListener {
     public void onExportTaskSubmitted(ExportTaskSubmittedEvent event) {
         Long taskId = event.getTaskId();
         log.info("收到导出任务提交事件, taskId={}", taskId);
-        exportTaskService.executeExportAsync(taskId);
+        exportTaskService.executeExport(taskId);
     }
 }

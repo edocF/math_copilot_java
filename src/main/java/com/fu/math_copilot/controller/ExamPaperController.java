@@ -82,7 +82,7 @@ public class ExamPaperController {
     }
 
     /**
-     * 提交导出任务（异步；具体渲染逻辑见 ExportTaskService#executeExportAsync）
+     * 提交导出任务（异步；具体渲染逻辑见 ExportTaskService#executeExport）
      */
     @PostMapping("/export")
     public BaseResponse<Long> submitExport(@RequestBody ExamPaperExportRequest request) {
