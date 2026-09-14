@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### Git worktrees ###
+.worktrees/
+
 ### jwt ###
 **/src/main/resources/jwt.jks
 **/src/main/resources/application.yml

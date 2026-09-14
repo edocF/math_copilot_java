@@ -23,3 +23,25 @@ spring:
     uris: http://localhost:9200
     username: root
     password: fht041029
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        concurrency: 2
+        max-concurrency: 4
+
+export:
+  mq:
+    retry-delay-millis: 30000
+    max-retries: 3
+    processing-timeout-millis: 600000
+    pending-republish-millis: 60000
+    recovery-fixed-delay-millis: 60000
+    recovery-batch-size: 100
